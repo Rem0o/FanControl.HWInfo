@@ -5,5 +5,6 @@ Plugin for [FanControl](https://github.com/Rem0o/FanControl.Releases) that provi
 ## To install
 
 * Compile the solution.
-
-and copy the bin/release content into FanControl's "plugins" folder.
+* Copy the bin/release content into FanControl's "plugins" folder.
+* Start HWInfo with shared memory on
+* Start Fan Control
