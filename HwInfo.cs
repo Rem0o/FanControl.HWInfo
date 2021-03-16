@@ -7,9 +7,9 @@ namespace FanControl.HWInfo
 {
     public class HWInfo : IDisposable
     {
-        public const string HWINFO_SHARED_MEM_FILE_NAME = "Global\\HWiNFO_SENS_SM2";
-        public const int HWINFO_SENSORS_STRING_LEN = 128;
-        public const int HWINFO_UNIT_STRING_LEN = 16;
+        private const string HWINFO_SHARED_MEM_FILE_NAME = "Global\\HWiNFO_SENS_SM2";
+        private const int HWINFO_SENSORS_STRING_LEN = 128;
+        private const int HWINFO_UNIT_STRING_LEN = 16;
 
         private MemoryMappedFile _memoryMappedFile;
         private MemoryMappedViewAccessor _accessor;
@@ -31,12 +31,13 @@ namespace FanControl.HWInfo
 
                 FillSensors();
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 Dispose();
+
                 throw exception;
             }
-            
+
         }
 
         public void Dispose()
@@ -50,6 +51,7 @@ namespace FanControl.HWInfo
         private IEnumerable<HWInfoSensorSource> ReadSensorSources()
         {
             for (uint index = 0; index < _sharedMemory.dwNumSensorElements; ++index)
+            {
                 using (MemoryMappedViewStream viewStream = _memoryMappedFile.CreateViewStream(_sharedMemory.dwOffsetOfSensorSection + index * _sharedMemory.dwSizeOfSensorElement, _sharedMemory.dwSizeOfSensorElement, MemoryMappedFileAccess.Read))
                 {
                     byte[] buffer = new byte[(int)_sharedMemory.dwSizeOfSensorElement];
@@ -62,6 +64,7 @@ namespace FanControl.HWInfo
 
                     yield return new HWInfoSensorSource(structure);
                 }
+            }
         }
 
         private void FillSensors()
