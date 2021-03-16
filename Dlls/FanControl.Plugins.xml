@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FanControl.Plugins</name>
+    </assembly>
+    <members>
+        <member name="T:FanControl.Plugins.IPlugin">
+            <summary>
+            Interface to implement a plugin. The life-cycle of the plugin is as follow:
+            Initialize => Load => Close. These methods should be able to be called in this order any number of times
+            without any side-effect or undisposed resources.
+            </summary>
+        </member>
+        <member name="P:FanControl.Plugins.IPlugin.Name">
+            <summary>
+            Unique name of the plugin. Will be displayed in the UI.
+            </summary>
+        </member>
+        <member name="M:FanControl.Plugins.IPlugin.Initialize">
+            <summary>
+            Called whenever the program starts or a refresh (Close + Initialize) is executed.
+            </summary>
+        </member>
+        <member name="M:FanControl.Plugins.IPlugin.Load(FanControl.Plugins.IPluginSensorsContainer)">
+            <summary>
+            Provides a container to inject sensors into fan control.
+            </summary>
+            <param name="_container">Container</param>
+        </member>
+        <member name="M:FanControl.Plugins.IPlugin.Close">
+            <summary>
+            Called whenever the program closes or a refresh (Close + Initialize) is executed.
+            </summary>
+        </member>
+        <member name="P:FanControl.Plugins.IPluginSensor.Name">
+            <summary>
+            Name that will be displayed to the user
+            </summary>
+        </member>
+        <member name="P:FanControl.Plugins.IPluginSensor.Value">
+            <summary>
+            Current value of the sensor
+            </summary>
+        </member>
+        <member name="M:FanControl.Plugins.IPluginSensor.Update">
+            <summary>
+            Update the sensor value. This method will be called by FanControl during its internal update cycle.
+            </summary>
+        </member>
+        <member name="M:FanControl.Plugins.IPluginControlSensor.Set(System.Single)">
+            <summary>
+            Set the fan speed the control in percent. Called when the corresponding control is enabled.
+            </summary>
+            <param name="val">Value between 0 and 100</param>
+        </member>
+        <member name="M:FanControl.Plugins.IPluginControlSensor.Reset">
+            <summary>
+            Reset the control to its default state. Called once when the corresponding control is disabled.
+            </summary>
+        </member>
+        <member name="T:FanControl.Plugins.IPluginSensorsContainer">
+            <summary>
+            Container to inject your sensors into FanControl.
+            </summary>
+        </member>
+    </members>
+</doc>
