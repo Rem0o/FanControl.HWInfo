@@ -8,5 +8,7 @@ Either
 * Download the latest binaries from [AppVeyor](https://ci.appveyor.com/project/Rem0o/fancontrol-hwinfo/branch/master/artifacts)
 * Compile the solution.
 
-* Copy the bin/release content into FanControl's "plugins" folder.
-* Make sure HWInfo has shared memory on.
+And then
+
+1. Copy the bin/release content into FanControl's "plugins" folder.
+2. Make sure HWInfo has shared memory on.
