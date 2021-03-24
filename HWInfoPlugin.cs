@@ -1,4 +1,5 @@
 ﻿using FanControl.Plugins;
+using System.Linq;
 
 namespace FanControl.HWInfo
 {
@@ -19,14 +20,14 @@ namespace FanControl.HWInfo
         public void Load(IPluginSensorsContainer _container)
         {
             foreach (var source in _hWInfo?.SensorsSource)
-                foreach(var sensor in source.Sensors)
+                foreach (var sensor in source.Sensors)
                     AddSensorToContainer(_container, source, sensor);
         }
 
         private static void AddSensorToContainer(IPluginSensorsContainer _container, HWInfo.HWInfoSensorSource source, HWInfo.HWInfoSensor sensor)
         {
             var sensorElement = sensor.GetUpdatedElement();
-            var pluginSensor = new HWInfoPluginSensor(source.Sensor.szSensorNameUser, sensorElement.szLabelUser, sensor.GetUpdatedElement);
+            var pluginSensor = new HWInfoPluginSensor(source.Sensor.szSensorNameUser, sensor.GetUpdatedElement);
 
             if (sensorElement.szUnit == "RPM")
                 _container.FanSensors.Add(pluginSensor);
