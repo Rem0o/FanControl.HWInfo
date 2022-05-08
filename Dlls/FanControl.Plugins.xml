@@ -32,6 +32,33 @@
             Called whenever the program closes or a refresh (Close + Initialize) is executed.
             </summary>
         </member>
+        <member name="T:FanControl.Plugins.IPlugin2">
+            <summary>
+            Newer version of the plugin interface. 
+            Adds a "update hook" that can be used to update everything that is managed by the plugin in a single call
+            </summary>
+        </member>
+        <member name="M:FanControl.Plugins.IPlugin2.Update">
+            <summary>
+            Update hook, This method will be called periodically by FanControl during its internal update cycle.
+            </summary>
+        </member>
+        <member name="M:FanControl.Plugins.IPluginControlSensor.Set(System.Single)">
+            <summary>
+            Set the fan speed the control in percent. Called when the corresponding control is enabled.
+            </summary>
+            <param name="val">Value between 0 and 100</param>
+        </member>
+        <member name="M:FanControl.Plugins.IPluginControlSensor.Reset">
+            <summary>
+            Reset the control to its default state. Called once when the corresponding control is disabled.
+            </summary>
+        </member>
+        <member name="P:FanControl.Plugins.IPluginSensor.Id">
+            <summary>
+            Unique id for the sensor.
+            </summary>
+        </member>
         <member name="P:FanControl.Plugins.IPluginSensor.Name">
             <summary>
             Name that will be displayed to the user
@@ -44,18 +71,7 @@
         </member>
         <member name="M:FanControl.Plugins.IPluginSensor.Update">
             <summary>
-            Update the sensor value. This method will be called by FanControl during its internal update cycle.
-            </summary>
-        </member>
-        <member name="M:FanControl.Plugins.IPluginControlSensor.Set(System.Single)">
-            <summary>
-            Set the fan speed the control in percent. Called when the corresponding control is enabled.
-            </summary>
-            <param name="val">Value between 0 and 100</param>
-        </member>
-        <member name="M:FanControl.Plugins.IPluginControlSensor.Reset">
-            <summary>
-            Reset the control to its default state. Called once when the corresponding control is disabled.
+            Update hook. This method will be called periodically by FanControl during its internal update cycle.
             </summary>
         </member>
         <member name="T:FanControl.Plugins.IPluginSensorsContainer">

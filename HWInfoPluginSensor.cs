@@ -5,24 +5,29 @@ namespace FanControl.HWInfo
 {
     public class HWInfoPluginSensor : IPluginSensor
     {
-        private readonly Func<HWInfo._HWiNFO_ELEMENT> _sensorElementGetter;
-
-        public HWInfoPluginSensor(string originName, Func<HWInfo._HWiNFO_ELEMENT> sensorElementGetter)
+        internal HWInfoPluginSensor(int index, HwInfoSensorType type, string id, string name)
         {
-            var element = sensorElementGetter();
-
-            Name = $"{element.szLabelUser} - {originName}";
-            Id = $"{element.dwSensorIndex}_{element.dwSensorID}";
-
-            _sensorElementGetter = sensorElementGetter;
+            Index = index;
+            Type = type;
+            Id = id;
+            Name = name;
         }
+
+        internal HwInfoSensorType Type { get; }
+
+        internal int Index { get; }
+
+
+        #region IPluginSensor Implementation
 
         public string Name { get; }
 
-        public float? Value { get; private set; }
+        public float? Value { get; internal set; }
 
         public string Id { get; }
 
-        public void Update() => Value = (float)_sensorElementGetter().Value;
+        public void Update() { }
+
+        #endregion
     }
 }

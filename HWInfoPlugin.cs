@@ -1,38 +1,70 @@
 ﻿using FanControl.Plugins;
-using System.Linq;
 
 namespace FanControl.HWInfo
 {
-    public class HWInfoPlugin : IPlugin
+    public class HWInfoPlugin : IPlugin2
     {
-        private HWInfo _hWInfo;
-
         public string Name => "HWInfo";
+
+        public void Initialize()
+        {
+            using (var hwinfo = new HWInfoRegistry())
+            {
+                _isInitialized = hwinfo.IsActive();
+            }
+        }
 
         public void Close()
         {
-            _hWInfo?.Dispose();
-            _hWInfo = null;
+            _isInitialized = false;
+            _sensors = null;
         }
-
-        public void Initialize() => _hWInfo = new HWInfo();
 
         public void Load(IPluginSensorsContainer _container)
         {
-            foreach (var source in _hWInfo?.SensorsSource)
-                foreach (var sensor in source.Sensors)
-                    AddSensorToContainer(_container, source, sensor);
+            if (!_isInitialized) return;
+
+            using (var hwinfo = new HWInfoRegistry())
+            {
+                _sensors = hwinfo.GetSensors();
+
+                foreach (var sensor in _sensors)
+                {
+                    switch(sensor.Type)
+                    {
+                        case HwInfoSensorType.Temperature:
+                            _container.TempSensors.Add(sensor);
+                            break;
+                        case HwInfoSensorType.RPM:
+                            _container.FanSensors.Add(sensor);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
-        private static void AddSensorToContainer(IPluginSensorsContainer _container, HWInfo.HWInfoSensorSource source, HWInfo.HWInfoSensor sensor)
+        public void Update()
         {
-            var sensorElement = sensor.GetUpdatedElement();
-            var pluginSensor = new HWInfoPluginSensor(source.Sensor.szSensorNameUser, sensor.GetUpdatedElement);
+            if (!_isInitialized) return;
 
-            if (sensorElement.szUnit == "RPM")
-                _container.FanSensors.Add(pluginSensor);
-            else if (sensorElement.szUnit == "°C")
-                _container.TempSensors.Add(pluginSensor);
+            using (var hwinfo = new HWInfoRegistry())
+            {
+                if (!hwinfo.IsActive())
+                {
+                    throw new System.Exception("HWInfo was closed during operation.");
+                }
+
+                if (!hwinfo.UpdateValues(_sensors))
+                {
+                    Close();
+                    throw new System.Exception("HWInfo sensors were changed during operation");
+                }
+            }
         }
+
+        private bool _isInitialized = false;
+        private HWInfoPluginSensor[] _sensors;
     }
 }
