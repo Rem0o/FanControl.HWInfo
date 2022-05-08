@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FanControl.HWInfo", "FanControl.HWInfo.csproj", "{FB6F1A67-0E0F-4E48-A6BF-C56486A09565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp4", "..\ConsoleApp4\ConsoleApp4.csproj", "{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,18 +27,6 @@ Global
 		{FB6F1A67-0E0F-4E48-A6BF-C56486A09565}.Release|x64.Build.0 = Release|Any CPU
 		{FB6F1A67-0E0F-4E48-A6BF-C56486A09565}.Release|x86.ActiveCfg = Release|Any CPU
 		{FB6F1A67-0E0F-4E48-A6BF-C56486A09565}.Release|x86.Build.0 = Release|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Debug|x64.Build.0 = Debug|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Debug|x86.Build.0 = Debug|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Release|x64.ActiveCfg = Release|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Release|x64.Build.0 = Release|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Release|x86.ActiveCfg = Release|Any CPU
-		{048AF53B-90D0-44AC-9F29-5CAC7AA8302B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
