@@ -10,7 +10,8 @@ namespace FanControl.HWInfo
         {
             using (var hwinfo = new HWInfoRegistry())
             {
-                if (!hwinfo.IsActive())
+                _isInitialized = hwinfo.IsActive();
+                if (!_isInitialized)
                 {
                     throw new System.Exception("HWInfo is not running or reporting to gadget is not enabled.");
                 }
