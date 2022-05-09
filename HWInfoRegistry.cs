@@ -76,7 +76,7 @@ namespace FanControl.HWInfo
 
         public void Dispose()
         {
-            _key.Dispose();
+            _key?.Dispose();
             _key = null;
         }
 

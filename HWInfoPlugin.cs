@@ -10,7 +10,10 @@ namespace FanControl.HWInfo
         {
             using (var hwinfo = new HWInfoRegistry())
             {
-                _isInitialized = hwinfo.IsActive();
+                if (hwinfo.IsActive())
+                {
+                    throw new System.Exception("HWInfo is not running or reporting to gadget is not enabled.");
+                }
             }
         }
 
@@ -30,7 +33,7 @@ namespace FanControl.HWInfo
 
                 foreach (var sensor in _sensors)
                 {
-                    switch(sensor.Type)
+                    switch (sensor.Type)
                     {
                         case HwInfoSensorType.Temperature:
                             _container.TempSensors.Add(sensor);
