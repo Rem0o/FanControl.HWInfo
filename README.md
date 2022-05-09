@@ -1,6 +1,6 @@
 # FanControl.HWInfo [![Build status](https://ci.appveyor.com/api/projects/status/ea76b9272trofoa6/branch/master?svg=true)](https://ci.appveyor.com/project/Rem0o/fancontrol-hwinfo/branch/master)
 
-Plugin for [FanControl](https://github.com/Rem0o/FanControl.Releases) that provides support for HWInfo sensors using its shared memory feature.
+Plugin for [FanControl](https://github.com/Rem0o/FanControl.Releases) ( >= V113) that provides support for HWInfo sensors using the "Reporting to Gadget" feature.
 
 ## To install
 
@@ -10,5 +10,12 @@ Either
 
 And then
 
-1. Copy the bin/release content into FanControl's "plugins" folder.
-2. Make sure HWInfo has shared memory on.
+1. Copy the FanControl.HWInfo.dll into FanControl's "Plugins" folder.
+2. Go the HWInfo's "Configure Sensors" option menu, then to the "HWInfo Gadget" tab. Have the "Enable reporting to gadget" checkbox checked and select "Report value in Gadget" for all sensors you want to import.
+3. Open FanControl and enjoy!
+
+## Notes
+
+* HWInfo needs to be running at least in "Sensors-only" mode.
+* You can use the "refresh sensors detection" menu option in FanControl while it is running if you didn't have HWInfo running or you changed the exported sensors.
+
