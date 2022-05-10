@@ -1,12 +1,15 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace FanControl.HWInfo
 {
-    internal class HWInfoRegistry: IDisposable
+    internal class HWInfoRegistry : IDisposable
     {
+        private static CultureInfo _format = new CultureInfo("en-us");
+
         const string SENSOR_REGISTRY_NAME = "Sensor";
         const string LABEL_REGISTRY_NAME = "Label";
         const string VALUE_REGISTRY_NAME = "Value";
@@ -59,7 +62,7 @@ namespace FanControl.HWInfo
 
         internal bool UpdateValues(HWInfoPluginSensor[] sensors)
         {
-            foreach(var sensor in sensors)
+            foreach (var sensor in sensors)
             {
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
@@ -68,7 +71,7 @@ namespace FanControl.HWInfo
                     return false;
                 }
 
-                sensor.Value = float.Parse((String)valueRaw);
+                sensor.Value = float.TryParse((string)valueRaw, NumberStyles.Float, _format, out float res) ? res : default(float?);
             }
 
             return true;
