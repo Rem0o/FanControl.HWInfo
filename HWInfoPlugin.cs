@@ -4,6 +4,15 @@ namespace FanControl.HWInfo
 {
     public class HWInfoPlugin : IPlugin2
     {
+        private readonly IPluginLogger _logger;
+        private readonly IPluginDialog _dialog;
+
+        public HWInfoPlugin(IPluginLogger logger, IPluginDialog dialog)
+        {
+            _logger = logger;
+            _dialog = dialog;
+        }
+
         public string Name => "HWInfo";
 
         public void Initialize()
@@ -57,6 +66,7 @@ namespace FanControl.HWInfo
             {
                 if (!hwinfo.IsActive())
                 {
+                    Close();
                     throw new System.Exception("HWInfo was closed during operation.");
                 }
 
