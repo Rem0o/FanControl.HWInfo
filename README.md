@@ -10,7 +10,7 @@ Either
 
 And then
 
-1. Copy the FanControl.HWInfo.dll into FanControl's "Plugins" folder.
+1. Copy the FanControl.HWInfo.dll into FanControl's "Plugins" folder. You might need to unlock it in its properties.
 2. Go the HWInfo's "Configure Sensors" option menu, then to the "HWInfo Gadget" tab. Have the "Enable reporting to gadget" checkbox checked and select "Report value in Gadget" for all sensors you want to import.
 3. Open FanControl and enjoy!
 
