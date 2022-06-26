@@ -1,5 +1,4 @@
 ﻿using FanControl.Plugins;
-using System;
 
 namespace FanControl.HWInfo
 {

@@ -1,8 +1,8 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Microsoft.Win32;
 
 namespace FanControl.HWInfo
 {
@@ -16,7 +16,7 @@ namespace FanControl.HWInfo
         const string VALUE_RAW_REGISTRY_NAME = "ValueRaw";
         const string MAIN_KEY = @"SOFTWARE\HWiNFO64\VSB";
 
-        private RegistryKey _key = null;
+        private RegistryKey _key;
 
         public HWInfoRegistry()
         {

@@ -1,4 +1,5 @@
-﻿using FanControl.Plugins;
+﻿using System;
+using FanControl.Plugins;
 
 namespace FanControl.HWInfo
 {
@@ -22,7 +23,7 @@ namespace FanControl.HWInfo
                 _isInitialized = hwinfo.IsActive();
                 if (!_isInitialized)
                 {
-                    throw new System.Exception("HWInfo is not running or reporting to gadget is not enabled.");
+                    throw new Exception("HWInfo is not running or reporting to gadget is not enabled.");
                 }
             }
         }
@@ -33,7 +34,7 @@ namespace FanControl.HWInfo
             _sensors = null;
         }
 
-        public void Load(IPluginSensorsContainer _container)
+        public void Load(IPluginSensorsContainer container)
         {
             if (!_isInitialized) return;
 
@@ -46,12 +47,10 @@ namespace FanControl.HWInfo
                     switch (sensor.Type)
                     {
                         case HwInfoSensorType.Temperature:
-                            _container.TempSensors.Add(sensor);
+                            container.TempSensors.Add(sensor);
                             break;
                         case HwInfoSensorType.RPM:
-                            _container.FanSensors.Add(sensor);
-                            break;
-                        default:
+                            container.FanSensors.Add(sensor);
                             break;
                     }
                 }
@@ -67,18 +66,18 @@ namespace FanControl.HWInfo
                 if (!hwinfo.IsActive())
                 {
                     Close();
-                    throw new System.Exception("HWInfo was closed during operation.");
+                    throw new Exception("HWInfo was closed during operation.");
                 }
 
                 if (!hwinfo.UpdateValues(_sensors))
                 {
                     Close();
-                    throw new System.Exception("HWInfo sensors were changed during operation");
+                    throw new Exception("HWInfo sensors were changed during operation");
                 }
             }
         }
 
-        private bool _isInitialized = false;
-        private HWInfoPluginSensor[] _sensors;
+        private bool _isInitialized;
+        private HWInfoPluginSensor[] _sensors = Array.Empty<HWInfoPluginSensor>();
     }
 }
