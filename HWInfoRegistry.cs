@@ -18,15 +18,9 @@ namespace FanControl.HWInfo
 
         private RegistryKey _key;
 
-        public HWInfoRegistry()
-        {
-            _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY);
-        }
+        public HWInfoRegistry() => _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY);
 
-        public bool IsActive()
-        {
-            return _key != null;
-        }
+        public bool IsActive() => _key != null;
 
         public HWInfoPluginSensor[] GetSensors()
         {
@@ -46,11 +40,11 @@ namespace FanControl.HWInfo
                 {
                     if (int.TryParse(sensor.Replace(SENSOR_REGISTRY_NAME, string.Empty), out int index))
                     {
-                        var kind = GetKind(subKey, index);
+                        var type = GetSensorType(subKey, index);
                         string id = GetId(subKey, index);
                         string name = GetName(subKey, index);
 
-                        var hwInfoSensor = new HWInfoPluginSensor(index, kind, id, name);
+                        var hwInfoSensor = new HWInfoPluginSensor(index, type, id, name);
 
                         list.Add(hwInfoSensor);
                     }
@@ -67,9 +61,7 @@ namespace FanControl.HWInfo
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
                 if (valueRaw == null)
-                {
                     return false;
-                }
 
                 sensor.Value = float.TryParse((string)valueRaw, NumberStyles.Float, _format, out float res) ? res : default(float?);
             }
@@ -83,10 +75,10 @@ namespace FanControl.HWInfo
             _key = null;
         }
 
-        private static HwInfoSensorType GetKind(RegistryKey key, int index)
+        private static HwInfoSensorType GetSensorType(RegistryKey key, int index)
         {
             var value = (string)key.GetValue(VALUE_REGISTRY_NAME + index);
-            var unit = value.Split(' ')[1];
+            var unit = value.Trim().Split(' ').Skip(1).FirstOrDefault() ?? string.Empty;
 
             switch (unit.ToUpperInvariant())
             {

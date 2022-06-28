@@ -31,7 +31,7 @@ namespace FanControl.HWInfo
         public void Close()
         {
             _isInitialized = false;
-            _sensors = null;
+            _sensors = Array.Empty<HWInfoPluginSensor>();
         }
 
         public void Load(IPluginSensorsContainer container)
