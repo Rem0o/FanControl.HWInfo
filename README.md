@@ -1,6 +1,8 @@
 # FanControl.HWInfo [![Build status](https://ci.appveyor.com/api/projects/status/ea76b9272trofoa6/branch/master?svg=true)](https://ci.appveyor.com/project/Rem0o/fancontrol-hwinfo/branch/master)
 
-Plugin for [FanControl](https://github.com/Rem0o/FanControl.Releases) ( >= V113) that provides support for HWInfo sensors using the "Reporting to Gadget" feature.
+Plugin for [FanControl](https://github.com/Rem0o/FanControl.Releases) (>= V113) that provides support for HWInfo sensors using the "Reporting to Gadget" feature. 
+
+Inspiration from https://docs.rainmeter.net/tips/hwinfo/
 
 ## To install
 
