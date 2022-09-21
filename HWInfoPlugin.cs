@@ -31,6 +31,10 @@ namespace FanControl.HWInfo
         public void Close()
         {
             _isInitialized = false;
+
+            foreach( var sensor in _sensors)
+                sensor.Value = float.NaN;
+
             _sensors = Array.Empty<HWInfoPluginSensor>();
         }
 
@@ -61,18 +65,19 @@ namespace FanControl.HWInfo
         {
             if (!_isInitialized) return;
 
-            using (var hwinfo = new HWInfoRegistry())
+            using (var hwInfoRegistry = new HWInfoRegistry())
             {
-                if (!hwinfo.IsActive())
+                if (!hwInfoRegistry.IsActive())
                 {
                     Close();
                     throw new Exception("HWInfo was closed during operation.");
                 }
 
-                if (!hwinfo.UpdateValues(_sensors))
+                HWInfoRegistryUpdateResult result = hwInfoRegistry.UpdateValues(_sensors);
+                if (!result.IsSuccess)
                 {
                     Close();
-                    throw new Exception("HWInfo sensors were changed during operation");
+                    throw new Exception($"HWInfo sensor value went missing from registry: {result.MissingSensor.Name}");
                 }
             }
         }

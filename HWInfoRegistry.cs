@@ -54,19 +54,19 @@ namespace FanControl.HWInfo
             }
         }
 
-        internal bool UpdateValues(HWInfoPluginSensor[] sensors)
+        internal HWInfoRegistryUpdateResult UpdateValues(HWInfoPluginSensor[] sensors)
         {
             foreach (var sensor in sensors)
             {
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
                 if (valueRaw == null)
-                    return false;
+                    return HWInfoRegistryUpdateResult.Failure(sensor);
 
                 sensor.Value = float.TryParse((string)valueRaw, NumberStyles.Float, _format, out float res) ? res : default(float?);
             }
 
-            return true;
+            return HWInfoRegistryUpdateResult.Success();
         }
 
         public void Dispose()

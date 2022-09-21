@@ -48,6 +48,7 @@
     <Compile Include="HWInfoRegistry.cs" />
     <Compile Include="HWInfoPlugin.cs" />
     <Compile Include="HWInfoPluginSensor.cs" />
+    <Compile Include="HWInfoRegistryUpdateResult.cs" />
     <Compile Include="HwInfoSensorType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
