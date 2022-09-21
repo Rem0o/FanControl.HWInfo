@@ -2,7 +2,9 @@
 {
     internal class HWInfoRegistryUpdateResult
     {
-        public static HWInfoRegistryUpdateResult Success() => new HWInfoRegistryUpdateResult();
+        private static HWInfoRegistryUpdateResult SuccessSingleton = new HWInfoRegistryUpdateResult();
+
+        public static HWInfoRegistryUpdateResult Success() => SuccessSingleton;
 
         public static HWInfoRegistryUpdateResult Failure(HWInfoPluginSensor sensor) => new HWInfoRegistryUpdateResult(sensor);
 
