@@ -63,11 +63,11 @@ namespace FanControl.HWInfo
             if (_key.ValueCount != _count)
             {
                 _count = _key.ValueCount;
-                var newSensors = GetSensors().ToDictionary(x => x.Name, x => x);
+                var newSensors = GetSensors().ToDictionary(x => x.Id, x => x);
 
                 foreach (var sensor in sensors)
                 {
-                    if (newSensors.TryGetValue(sensor.Name, out var corresponding))
+                    if (newSensors.TryGetValue(sensor.Id, out var corresponding))
                     {
                         sensor.Index = corresponding.Index;
                     }
