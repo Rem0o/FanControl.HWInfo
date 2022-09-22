@@ -80,6 +80,11 @@ namespace FanControl.HWInfo
                     Close();
                     throw new Exception($"HWInfo sensor value went missing from registry: {names}");
                 }
+                else
+                {
+                    var names = String.Join(", ", result.MissingSensors.Select(x => x.Name));
+                    System.IO.File.AppendAllText("log.txt", Environment.NewLine + DateTime.Now + ": " + $"HWInfo sensor value went missing from registry: {names}");
+                }
             }
             else
             {
