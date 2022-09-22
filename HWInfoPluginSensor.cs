@@ -14,7 +14,7 @@ namespace FanControl.HWInfo
 
         internal HwInfoSensorType Type { get; }
 
-        internal int Index { get; }
+        internal int Index { get; set; }
 
 
         #region IPluginSensor Implementation
@@ -26,6 +26,14 @@ namespace FanControl.HWInfo
         public string Id { get; }
 
         public void Update() { }
+
+        internal void Invalidate()
+        {
+            Index = -1;
+            Value = null;
+        }
+
+        public bool IsValid => Index > -1;
 
         #endregion
     }

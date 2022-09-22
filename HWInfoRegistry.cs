@@ -17,56 +17,94 @@ namespace FanControl.HWInfo
         const string MAIN_KEY = @"SOFTWARE\HWiNFO64\VSB";
 
         private RegistryKey _key;
+        private int _count;
 
-        public HWInfoRegistry() => _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY);
+        public HWInfoRegistry()
+        {
+            _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY);
+            _count = _key?.ValueCount ?? 0;
+        }
 
         public bool IsActive() => _key != null;
 
         public HWInfoPluginSensor[] GetSensors()
         {
-            using (var subKey = Registry.CurrentUser.OpenSubKey(MAIN_KEY))
+            if (_key == null)
             {
-                if (subKey == null)
-                {
-                    return Array.Empty<HWInfoPluginSensor>();
-                }
-
-                var names = subKey.GetValueNames();
-                var sensors = names.Where(x => x.StartsWith(SENSOR_REGISTRY_NAME, StringComparison.InvariantCultureIgnoreCase));
-
-                var list = new List<HWInfoPluginSensor>();
-
-                foreach (var sensor in sensors)
-                {
-                    if (int.TryParse(sensor.Replace(SENSOR_REGISTRY_NAME, string.Empty), out int index))
-                    {
-                        var type = GetSensorType(subKey, index);
-                        string id = GetId(subKey, index);
-                        string name = GetName(subKey, index);
-
-                        var hwInfoSensor = new HWInfoPluginSensor(index, type, id, name);
-
-                        list.Add(hwInfoSensor);
-                    }
-                }
-
-                return list.ToArray();
+                return Array.Empty<HWInfoPluginSensor>();
             }
+
+            var names = _key.GetValueNames();
+
+            var sensors = names.Where(x => x.StartsWith(SENSOR_REGISTRY_NAME, StringComparison.InvariantCultureIgnoreCase));
+
+            var list = new List<HWInfoPluginSensor>();
+
+            foreach (var sensor in sensors)
+            {
+                if (int.TryParse(sensor.Replace(SENSOR_REGISTRY_NAME, string.Empty), out int index))
+                {
+                    var type = GetSensorType(_key, index);
+                    var id = GetId(_key, index);
+                    var name = GetName(_key, index);
+
+                    var hwInfoSensor = new HWInfoPluginSensor(index, type, id, name);
+
+                    list.Add(hwInfoSensor);
+                }
+            }
+
+            return list.ToArray();
+
         }
 
         internal HWInfoRegistryUpdateResult UpdateValues(HWInfoPluginSensor[] sensors)
         {
-            foreach (var sensor in sensors)
+            if (_key.ValueCount != _count)
             {
-                object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
+                _count = _key.ValueCount;
+                var newSensors = GetSensors().ToDictionary(x => x.Name, x => x);
 
-                if (valueRaw == null)
-                    return HWInfoRegistryUpdateResult.Failure(sensor);
-
-                sensor.Value = float.TryParse((string)valueRaw, NumberStyles.Float, _format, out float res) ? res : default(float?);
+                foreach (var sensor in sensors)
+                {
+                    if (newSensors.TryGetValue(sensor.Name, out var corresponding))
+                    {
+                        sensor.Index = corresponding.Index;
+                    }
+                    else
+                    {
+                        sensor.Invalidate();
+                    }
+                }
             }
 
-            return HWInfoRegistryUpdateResult.Success();
+            var missings = new List<HWInfoPluginSensor>();
+
+            foreach (var sensor in sensors)
+            {
+                if (!sensor.IsValid)
+                {
+                    missings.Add(sensor);
+                    continue;
+                }
+
+                object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
+
+                sensor.Value =  
+                    valueRaw is string str && 
+                    !string.IsNullOrEmpty(str) && 
+                    float.TryParse(str, NumberStyles.Float, _format, out float res) ? 
+                        res : default;
+
+                if (sensor.Value == default)
+                {
+                    missings.Add(sensor);
+                }
+            }
+
+            return missings.Any() ?
+                HWInfoRegistryUpdateResult.Failure(missings) :
+                HWInfoRegistryUpdateResult.Success();
         }
 
         public void Dispose()
