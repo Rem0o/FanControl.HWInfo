@@ -89,14 +89,10 @@ namespace FanControl.HWInfo
 
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
-                if ( valueRaw is string str && !string.IsNullOrEmpty(str) && float.TryParse(str, NumberStyles.Float, _format, out float res))
-                {
+                if (valueRaw is string str && !string.IsNullOrEmpty(str) && float.TryParse(str, NumberStyles.Float, _format, out float res))
                     sensor.Value = res;
-                }
                 else
-                {
                     missings.Add(sensor);
-                }
             }
 
             return missings.Any() ?
@@ -140,7 +136,12 @@ namespace FanControl.HWInfo
         {
             var sensor = subKey.GetValue(SENSOR_REGISTRY_NAME + index);
             var label = subKey.GetValue(LABEL_REGISTRY_NAME + index);
-            var unit = (((string)subKey.GetValue(VALUE_REGISTRY_NAME + index)).Trim().Split(' ').Skip(1).FirstOrDefault() ?? string.Empty).ToUpperInvariant();
+            var unit = (subKey.GetValue(VALUE_REGISTRY_NAME + index)
+                .ToString()
+                .Trim()
+                .Split(' ')
+                .Skip(1)
+                .FirstOrDefault() ?? string.Empty).ToUpperInvariant();
 
             return $"HWInfo/{sensor}/{label}/{unit}";
         }
