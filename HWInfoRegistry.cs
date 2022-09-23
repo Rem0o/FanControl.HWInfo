@@ -55,7 +55,6 @@ namespace FanControl.HWInfo
             }
 
             return list.ToArray();
-
         }
 
         internal HWInfoRegistryUpdateResult UpdateValues(HWInfoPluginSensor[] sensors)
@@ -90,13 +89,11 @@ namespace FanControl.HWInfo
 
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
-                sensor.Value =  
-                    valueRaw is string str && 
-                    !string.IsNullOrEmpty(str) && 
-                    float.TryParse(str, NumberStyles.Float, _format, out float res) ? 
-                        res : default;
-
-                if (sensor.Value == default)
+                if ( valueRaw is string str && !string.IsNullOrEmpty(str) && float.TryParse(str, NumberStyles.Float, _format, out float res))
+                {
+                    sensor.Value = res;
+                }
+                else
                 {
                     missings.Add(sensor);
                 }

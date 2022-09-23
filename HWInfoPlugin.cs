@@ -32,7 +32,10 @@ namespace FanControl.HWInfo
             _updateFailCount = 0;
 
             foreach (var sensor in _sensors)
+            {
                 sensor.Invalidate();
+                sensor.Value = null;
+            }
 
             _sensors = Array.Empty<HWInfoPluginSensor>();
             _hwInfoRegistry?.Dispose();

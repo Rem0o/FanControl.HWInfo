@@ -30,7 +30,6 @@ namespace FanControl.HWInfo
         internal void Invalidate()
         {
             Index = -1;
-            Value = null;
         }
 
         public bool IsValid => Index > -1;
