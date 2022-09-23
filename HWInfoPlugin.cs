@@ -83,7 +83,7 @@ namespace FanControl.HWInfo
                 else
                 {
                     var IDs = String.Join(", ", result.MissingSensors.Select(x => x.Id));
-                    System.IO.File.AppendAllText("log.txt", Environment.NewLine + DateTime.Now + ": " + $"HWInfo sensor value went missing from registry: {IDs}");
+                    _logger.Log($"HWInfo sensor value went missing from registry: {IDs}");
                 }
             }
             else
