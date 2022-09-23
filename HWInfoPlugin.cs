@@ -76,14 +76,14 @@ namespace FanControl.HWInfo
             {
                 if (++_updateFailCount >= 10)
                 {
-                    var IDs = String.Join(", ", result.MissingSensors.Select(x => x.Id));
+                    var ids = String.Join(", ", result.MissingSensors.Select(x => x.Id));
                     Close();
-                    throw new Exception($"HWInfo sensor value went missing from registry: {IDs}");
+                    throw new Exception($"HWInfo sensor value went missing from registry: {ids}");
                 }
                 else
                 {
-                    var IDs = String.Join(", ", result.MissingSensors.Select(x => x.Id));
-                    _logger.Log($"HWInfo sensor value went missing from registry: {IDs}");
+                    var ids = String.Join(", ", result.MissingSensors.Select(x => x.Id));
+                    _logger.Log($"HWInfo sensor value went missing from registry: {ids}");
                 }
             }
             else
