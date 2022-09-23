@@ -144,7 +144,7 @@ namespace FanControl.HWInfo
             var sensor = subKey.GetValue(SENSOR_REGISTRY_NAME + index);
             var label = subKey.GetValue(LABEL_REGISTRY_NAME + index);
 
-            return $"HWInfo/{sensor}/{label}";
+            return $"HWInfo/{sensor}/{label}/{(((string)subKey.GetValue(VALUE_REGISTRY_NAME + index)).Trim().Split(' ').Skip(1).FirstOrDefault() ?? string.Empty).ToUpperInvariant()}";
         }
     }
 }
