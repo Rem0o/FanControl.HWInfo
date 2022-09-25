@@ -25,7 +25,17 @@ namespace FanControl.HWInfo
             _count = _key?.ValueCount ?? 0;
         }
 
-        public bool IsActive() => _key != null;
+        public bool IsActive()
+        {
+            try
+            {
+                return _key?.ValueCount > 0;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
+        }
 
         public HWInfoPluginSensor[] GetSensors()
         {
