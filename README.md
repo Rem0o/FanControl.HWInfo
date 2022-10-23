@@ -20,6 +20,12 @@ And then
 2. Go the HWInfo's "Configure Sensors" option menu, then to the "HWInfo Gadget" tab. Have the "Enable reporting to gadget" checkbox checked and select "Report value in Gadget" for all sensors you want to import.
 3. Open FanControl and enjoy!
 
+## HWInfo settings
+
+The following setting should be checked if you want to export any fan sensor.
+<br/><br/>
+![image](https://user-images.githubusercontent.com/14118956/197402866-53a81c80-83a3-4cd4-a0bc-28f2712088a3.png)
+
 ## Notes
 
 * HWInfo needs to be running at least in "Sensors-only" mode.
