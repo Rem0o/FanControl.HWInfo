@@ -50,6 +50,7 @@
     <Compile Include="HWInfoPluginSensor.cs" />
     <Compile Include="HWInfoRegistryUpdateResult.cs" />
     <Compile Include="HwInfoSensorType.cs" />
+    <Compile Include="FailedSensor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

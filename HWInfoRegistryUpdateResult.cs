@@ -9,22 +9,22 @@ namespace FanControl.HWInfo
 
         public static HWInfoRegistryUpdateResult Success() => SuccessSingleton;
 
-        public static HWInfoRegistryUpdateResult Failure(HWInfoPluginSensor sensor) => new HWInfoRegistryUpdateResult(sensor);
-        public static HWInfoRegistryUpdateResult Failure(IEnumerable<HWInfoPluginSensor> sensors) => new HWInfoRegistryUpdateResult(sensors);
+        public static HWInfoRegistryUpdateResult Failure(FailedSensor sensor) => new HWInfoRegistryUpdateResult(sensor);
+        public static HWInfoRegistryUpdateResult Failure(IEnumerable<FailedSensor> sensors) => new HWInfoRegistryUpdateResult(sensors);
 
-        private HWInfoRegistryUpdateResult(IEnumerable<HWInfoPluginSensor> sensors)
+        private HWInfoRegistryUpdateResult(IEnumerable<FailedSensor> sensors)
         {
-            (MissingSensors as List<HWInfoPluginSensor>).AddRange(sensors);
+            (MissingSensors as List<FailedSensor>).AddRange(sensors);
         }
 
-        private HWInfoRegistryUpdateResult(HWInfoPluginSensor sensor = null)
+        private HWInfoRegistryUpdateResult(FailedSensor? sensor = null)
         {
-            if ( sensor != null)
-                (MissingSensors as List<HWInfoPluginSensor>).Add(sensor);
+            if (sensor != null)
+                (MissingSensors as List<FailedSensor>).Add(sensor.Value);
         }
 
         public bool IsSuccess => !MissingSensors.Any();
 
-        public IEnumerable<HWInfoPluginSensor> MissingSensors { get; } = new List<HWInfoPluginSensor>();
+        public IEnumerable<FailedSensor> MissingSensors { get; } = new List<FailedSensor>();
     }
 }

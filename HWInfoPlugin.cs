@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FanControl.Plugins;
 
@@ -39,6 +40,14 @@ namespace FanControl.HWInfo
 
             _sensors = Array.Empty<HWInfoPluginSensor>();
             _hwInfoRegistry?.Dispose();
+
+            if (_wentMissing.Any())
+            {
+                var missingSensors = string.Join(Environment.NewLine, _wentMissing);
+                _logger.Log($"HWInfo sensor failed momentarily during operation: {missingSensors}");
+            }
+
+            _wentMissing.Clear();
         }
 
         public void Load(IPluginSensorsContainer container)
@@ -81,11 +90,14 @@ namespace FanControl.HWInfo
                 if (++_updateFailCount >= 10)
                 {
                     Close();
-                    throw new Exception($"HWInfo sensor value went missing from registry: {ids}");
+                    throw new Exception($"HWInfo sensors failed: {ids}");
                 }
                 else
                 {
-                    _logger.Log($"HWInfo sensor value went missing from registry: {ids}");
+                    foreach (var sensor in result.MissingSensors)
+                    {
+                        _wentMissing.Add(sensor.ToString());
+                    }
                 }
             }
             else
@@ -95,6 +107,7 @@ namespace FanControl.HWInfo
         }
 
         private HWInfoPluginSensor[] _sensors = Array.Empty<HWInfoPluginSensor>();
+        private HashSet<string> _wentMissing = new HashSet<string>();
         private HWInfoRegistry _hwInfoRegistry;
         private int _updateFailCount = 0;
     }

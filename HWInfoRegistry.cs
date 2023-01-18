@@ -87,13 +87,13 @@ namespace FanControl.HWInfo
                 }
             }
 
-            var missings = new List<HWInfoPluginSensor>();
+            var failed = new List<FailedSensor>();
 
             foreach (var sensor in sensors)
             {
                 if (!sensor.IsValid)
                 {
-                    missings.Add(sensor);
+                    failed.Add(new FailedSensor { Id = sensor.Id });
                     continue;
                 }
 
@@ -102,11 +102,11 @@ namespace FanControl.HWInfo
                 if (valueRaw is string str && !string.IsNullOrEmpty(str) && float.TryParse(str, NumberStyles.Float, _format, out float res))
                     sensor.Value = res;
                 else
-                    missings.Add(sensor);
+                    failed.Add(new FailedSensor { Id = sensor.Id, ValueRaw = valueRaw });
             }
 
-            return missings.Any() ?
-                HWInfoRegistryUpdateResult.Failure(missings) :
+            return failed.Any() ?
+                HWInfoRegistryUpdateResult.Failure(failed) :
                 HWInfoRegistryUpdateResult.Success();
         }
 
@@ -124,8 +124,7 @@ namespace FanControl.HWInfo
             switch (unit.ToUpperInvariant())
             {
                 case "°C":
-                // maybe should not support F since no conversion is available
-                case "°F":
+                case "°F":  // maybe should not support F since no conversion is available
                     return HwInfoSensorType.Temperature;
                 case "RPM":
                     return HwInfoSensorType.RPM;
