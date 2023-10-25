@@ -1,4 +1,4 @@
-# FanControl.HWInfo [![Build status](https://ci.appveyor.com/api/projects/status/ea76b9272trofoa6/branch/master?svg=true)](https://ci.appveyor.com/project/Rem0o/fancontrol-hwinfo/branch/master)
+# FanControl.HWInfo [![Build status](https://ci.appveyor.com/api/projects/status/7gyhm8mdf6o84egm?svg=true)](https://ci.appveyor.com/project/Rem0o/fancontrol-hwinfo)
 
 [![Download](https://img.shields.io/badge/Download-Plugin-green.svg?style=flat&logo=download)](https://github.com/Rem0o/FanControl.HWInfo/releases/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=N4JPSTUQHRJM8&currency_code=USD&source=url&item_name=Fan+Control)
