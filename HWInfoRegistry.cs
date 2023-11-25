@@ -124,7 +124,9 @@ namespace FanControl.HWInfo
             switch (unit.ToUpperInvariant())
             {
                 case "°C":
+                case "℃":
                 case "°F":  // maybe should not support F since no conversion is available
+                case "℉":
                     return HwInfoSensorType.Temperature;
                 case "RPM":
                     return HwInfoSensorType.RPM;
