@@ -60,6 +60,12 @@ namespace FanControl.HWInfo
 
                     var hwInfoSensor = new HWInfoPluginSensor(index, type, id, name);
 
+                    if (list.Any(x => x.Id == id))
+                    {
+                        // duplicate
+                        continue;
+                    }
+
                     list.Add(hwInfoSensor);
                 }
             }
