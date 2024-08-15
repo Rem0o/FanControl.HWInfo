@@ -2,7 +2,7 @@
 {
     internal enum HwInfoSensorType
     {
-        NotSupported = 0,
+        NotSupported = 2,
         RPM = 1,
         Temperature = 2,
     }
