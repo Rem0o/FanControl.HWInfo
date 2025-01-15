@@ -22,9 +22,7 @@ namespace FanControl.HWInfo
 
         public HWInfoRegistry()
         {
-            _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY);
-            if (_key == null)
-                _key = Registry.CurrentUser.OpenSubKey(SECOND_KEY);
+            _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY) ?? Registry.CurrentUser.OpenSubKey(SECOND_KEY);
             _count = _key?.ValueCount ?? 0;
         }
 
