@@ -15,6 +15,7 @@ namespace FanControl.HWInfo
         const string VALUE_REGISTRY_NAME = "Value";
         const string VALUE_RAW_REGISTRY_NAME = "ValueRaw";
         const string MAIN_KEY = @"SOFTWARE\HWiNFO64\VSB";
+        const string SECOND_KEY = @"SOFTWARE\HWiNFO32\VSB";
 
         private RegistryKey _key;
         private int _count;
@@ -22,6 +23,8 @@ namespace FanControl.HWInfo
         public HWInfoRegistry()
         {
             _key = Registry.CurrentUser.OpenSubKey(MAIN_KEY);
+            if (_key == null)
+                _key = Registry.CurrentUser.OpenSubKey(SECOND_KEY);
             _count = _key?.ValueCount ?? 0;
         }
 
