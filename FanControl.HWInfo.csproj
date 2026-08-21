@@ -1,16 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="FanControl.Plugins">
-      <HintPath>Dlls\FanControl.Plugins.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Dlls\FanControl.Plugins.dll" />
-    <Content Include="Dlls\FanControl.Plugins.xml" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <OutputType>Library</OutputType>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugType>none</DebugType>
+        <Optimize>True</Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="FanControl.Plugins">
+            <HintPath>Dlls\FanControl.Plugins.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Dlls\FanControl.Plugins.dll" />
+        <Content Include="Dlls\FanControl.Plugins.xml" />
+    </ItemGroup>
 </Project>
