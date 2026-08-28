@@ -100,6 +100,11 @@ namespace FanControl.HWInfo
             {
                 if (!sensor.IsValid)
                 {
+                    // Drop the last reading. Keeping it means FanControl runs a curve on
+                    // a temperature that no longer updates, which for a fan controller is
+                    // the worst way to fail: the real temperature rises, the reported one
+                    // stays put, and the fans never react.
+                    sensor.Value = null;
                     failed.Add(new FailedSensor { Id = sensor.Id });
                     continue;
                 }
@@ -107,9 +112,15 @@ namespace FanControl.HWInfo
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
                 if (valueRaw is string str && !string.IsNullOrEmpty(str) && float.TryParse(str, NumberStyles.Float, _format, out float res))
+                {
                     sensor.Value = res;
+                }
                 else
+                {
+                    // Same reasoning as above: no stale value on a failed read.
+                    sensor.Value = null;
                     failed.Add(new FailedSensor { Id = sensor.Id, ValueRaw = valueRaw });
+                }
             }
 
             return failed.Any() ?
