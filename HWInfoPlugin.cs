@@ -7,6 +7,8 @@ namespace FanControl.HWInfo
 {
     public class HWInfoPlugin : IPlugin2
     {
+        private const int MaxUpdateFailures = 10;
+
         private readonly IPluginLogger _logger;
         private readonly IPluginDialog _dialog;
 
@@ -31,6 +33,7 @@ namespace FanControl.HWInfo
         public void Close()
         {
             _updateFailCount = 0;
+            _staleReported = false;
 
             foreach (var sensor in _sensors)
             {
@@ -77,17 +80,52 @@ namespace FanControl.HWInfo
         {
             if (_sensors.Length == 0) return;
 
-            if (!_hwInfoRegistry.IsActive())
+            if (_hwInfoRegistry == null || !_hwInfoRegistry.IsActive())
             {
-                Close();
-                throw new Exception("HWInfo was closed during operation.");
+                // A single failed check used to close the plugin permanently: if HWiNFO
+                // was restarted, the plugin stayed dead until FanControl itself was
+                // restarted. Try to reattach instead, and report no reading meanwhile.
+                if (!TryReconnect())
+                {
+                    InvalidateAllValues();
+
+                    if (++_updateFailCount >= MaxUpdateFailures)
+                    {
+                        Close();
+                        throw new Exception("HWInfo was closed during operation.");
+                    }
+
+                    return;
+                }
             }
 
             HWInfoRegistryUpdateResult result = _hwInfoRegistry.UpdateValues(_sensors);
+
+            // HWiNFO stopped refreshing the key (closed, crashed, or restarting). The
+            // values have already been cleared, so FanControl sees sensors with no
+            // reading instead of a frozen temperature. This deliberately does not consume
+            // the fatal counter: the plugin recovers on its own once HWiNFO comes back.
+            if (result.IsStale)
+            {
+                if (!_staleReported)
+                {
+                    _logger.Log("HWInfo stopped refreshing its data. Sensor values cleared until it resumes.");
+                    _staleReported = true;
+                }
+
+                return;
+            }
+
+            if (_staleReported)
+            {
+                _logger.Log("HWInfo resumed refreshing its data.");
+                _staleReported = false;
+            }
+
             if (!result.IsSuccess)
             {
                 var ids = String.Join(", ", result.MissingSensors.Select(x => x.Id));
-                if (++_updateFailCount >= 10)
+                if (++_updateFailCount >= MaxUpdateFailures)
                 {
                     Close();
                     throw new Exception($"HWInfo sensors failed: {ids}");
@@ -106,9 +144,39 @@ namespace FanControl.HWInfo
             }
         }
 
+        /// <summary>
+        /// Reattaches to HWiNFO after it was closed or restarted.
+        /// </summary>
+        private bool TryReconnect()
+        {
+            _hwInfoRegistry?.Dispose();
+            _hwInfoRegistry = new HWInfoRegistry();
+
+            if (!_hwInfoRegistry.IsActive())
+            {
+                return false;
+            }
+
+            // On restart HWiNFO rebuilds the VSB list from scratch, so the indices cached
+            // in the sensors are no longer trustworthy. The automatic remapping only
+            // triggers when the value count changes, and it may well match: force it.
+            _hwInfoRegistry.InvalidateIndexCache();
+            _updateFailCount = 0;
+            return true;
+        }
+
+        private void InvalidateAllValues()
+        {
+            foreach (var sensor in _sensors)
+            {
+                sensor.Value = null;
+            }
+        }
+
         private HWInfoPluginSensor[] _sensors = Array.Empty<HWInfoPluginSensor>();
         private HashSet<string> _wentMissing = new HashSet<string>();
         private HWInfoRegistry _hwInfoRegistry;
         private int _updateFailCount = 0;
+        private bool _staleReported = false;
     }
 }

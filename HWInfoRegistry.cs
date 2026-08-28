@@ -19,6 +19,7 @@ namespace FanControl.HWInfo
 
         private RegistryKey _key;
         private int _count;
+        private readonly HWInfoFreshness _freshness = new HWInfoFreshness();
 
         public HWInfoRegistry()
         {
@@ -36,6 +37,18 @@ namespace FanControl.HWInfo
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Forces the sensor indices to be recomputed on the next UpdateValues() call.
+        /// Needed after reconnecting: HWiNFO rebuilds the VSB list from scratch, so the
+        /// indices cached in the sensors are no longer valid, but the value count may
+        /// happen to match and the automatic remapping would not trigger.
+        /// </summary>
+        internal void InvalidateIndexCache()
+        {
+            _count = -1;
+            _freshness.Reset();
         }
 
         public HWInfoPluginSensor[] GetSensors()
@@ -76,6 +89,19 @@ namespace FanControl.HWInfo
 
         internal HWInfoRegistryUpdateResult UpdateValues(HWInfoPluginSensor[] sensors)
         {
+            // The VSB key survives the HWiNFO process holding the last snapshot. Without
+            // this check the plugin keeps serving those frozen readings to FanControl
+            // forever, reporting nothing wrong.
+            if (!_freshness.IsFresh(_key))
+            {
+                foreach (var sensor in sensors)
+                {
+                    sensor.Value = null;
+                }
+
+                return HWInfoRegistryUpdateResult.Stale();
+            }
+
             if (_key.ValueCount != _count)
             {
                 _count = _key.ValueCount;
