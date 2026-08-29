@@ -51,9 +51,6 @@ namespace FanControl.HWInfo
 
             var list = new List<HWInfoPluginSensor>();
 
-            // The duplicate check used to be list.Any(x => x.Id == id) inside the loop,
-            // which is O(n^2) in string comparisons. GetSensors() runs again from
-            // UpdateValues() whenever ValueCount changes, so this is on a hot path.
             var seen = new HashSet<string>(StringComparer.Ordinal);
 
             foreach (var sensor in sensors)
