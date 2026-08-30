@@ -51,6 +51,8 @@ namespace FanControl.HWInfo
 
             var list = new List<HWInfoPluginSensor>();
 
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
             foreach (var sensor in sensors)
             {
                 if (int.TryParse(sensor.Replace(SENSOR_REGISTRY_NAME, string.Empty), out int index))
@@ -59,15 +61,13 @@ namespace FanControl.HWInfo
                     var id = GetId(_key, index);
                     var name = GetName(_key, index);
 
-                    var hwInfoSensor = new HWInfoPluginSensor(index, type, id, name);
-
-                    if (list.Any(x => x.Id == id))
+                    if (!seen.Add(id))
                     {
                         // duplicate
                         continue;
                     }
 
-                    list.Add(hwInfoSensor);
+                    list.Add(new HWInfoPluginSensor(index, type, id, name));
                 }
             }
 
