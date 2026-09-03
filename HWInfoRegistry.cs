@@ -44,11 +44,9 @@ namespace FanControl.HWInfo
             }
 
             var names = _key.GetValueNames();
-
             var sensors = names.Where(x => x.StartsWith(SENSOR_REGISTRY_NAME, StringComparison.InvariantCultureIgnoreCase));
 
             var list = new List<HWInfoPluginSensor>();
-
             var seen = new HashSet<string>(StringComparer.Ordinal);
 
             foreach (var sensor in sensors)
@@ -57,17 +55,16 @@ namespace FanControl.HWInfo
                 {
                     var type = GetSensorType(_key, index);
 
-                    // The gadget also publishes non-numeric entries: S.M.A.R.T. "Yes"/"No"
-                    // flags, CPU thermal throttling status, GPU performance limits. They
-                    // cannot be exposed as sensors, and parsing them in UpdateValues marks
-                    // the whole update as failed, which closes the plugin after 10 cycles.
                     if (type == HwInfoSensorType.NotSupported)
                     {
                         continue;
                     }
 
-                    var id = GetId(_key, index);
-                    var name = GetName(_key, index);
+                    if (!TryGetIdentity(_key, index, out var id, out var name))
+                    {
+                        // missing sensor/label or invalid id/name; skip
+                        continue;
+                    }
 
                     if (!seen.Add(id))
                     {
@@ -177,21 +174,20 @@ namespace FanControl.HWInfo
             }
         }
 
-        private static string GetName(RegistryKey subKey, int index)
+        private static bool TryGetIdentity(RegistryKey subKey, int index, out string id, out string name)
         {
-            var sensor = subKey.GetValue(SENSOR_REGISTRY_NAME + index);
-            var label = subKey.GetValue(LABEL_REGISTRY_NAME + index);
+            id = null;
+            name = null;
 
-            return $"{label} - {sensor}";
-        }
+            // Read sensor and label once to avoid duplicate GetValue calls and reduce
+            // chance of inconsistent reads due to HWiNFO rewriting the key concurrently.
+            var sensor = subKey.GetValue(SENSOR_REGISTRY_NAME + index)?.ToString()?.Trim() ?? string.Empty;
+            var label = subKey.GetValue(LABEL_REGISTRY_NAME + index)?.ToString()?.Trim() ?? string.Empty;
 
-        private static string GetId(RegistryKey subKey, int index)
-        {
-            var sensor = subKey.GetValue(SENSOR_REGISTRY_NAME + index);
-            var label = subKey.GetValue(LABEL_REGISTRY_NAME + index);
-            // Same race as in GetSensorType. An empty unit produces the same id as a
-            // value that simply has no unit, so ids stay stable and references saved in
-            // user configurations keep resolving.
+            // If either sensor or label is missing/empty, treat this entry as invalid.
+            if (string.IsNullOrEmpty(sensor) || string.IsNullOrEmpty(label))
+                return false;
+
             var rawValue = subKey.GetValue(VALUE_REGISTRY_NAME + index) as string ?? string.Empty;
 
             var unit = (rawValue
@@ -200,7 +196,10 @@ namespace FanControl.HWInfo
                 .Skip(1)
                 .FirstOrDefault() ?? string.Empty).ToUpperInvariant();
 
-            return $"HWInfo/{sensor}/{label}/{unit}";
+            id = $"HWInfo/{sensor}/{label}/{unit}";
+            name = $"{label} - {sensor}";
+
+            return true;
         }
     }
 }

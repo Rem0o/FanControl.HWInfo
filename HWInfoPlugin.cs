@@ -86,7 +86,7 @@ namespace FanControl.HWInfo
             HWInfoRegistryUpdateResult result = _hwInfoRegistry.UpdateValues(_sensors);
             if (!result.IsSuccess)
             {
-                var ids = String.Join(", ", result.MissingSensors.Select(x => x.Id));
+                var ids = string.Join(", ", result.MissingSensors.Select(x => x.Id));
                 if (++_updateFailCount >= 10)
                 {
                     Close();
@@ -107,7 +107,7 @@ namespace FanControl.HWInfo
         }
 
         private HWInfoPluginSensor[] _sensors = Array.Empty<HWInfoPluginSensor>();
-        private HashSet<string> _wentMissing = new HashSet<string>();
+        private readonly HashSet<string> _wentMissing = new HashSet<string>();
         private HWInfoRegistry _hwInfoRegistry;
         private int _updateFailCount = 0;
     }

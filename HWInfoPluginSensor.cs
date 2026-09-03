@@ -16,7 +16,6 @@ namespace FanControl.HWInfo
 
         internal int Index { get; set; }
 
-
         #region IPluginSensor Implementation
 
         public string Name { get; }
