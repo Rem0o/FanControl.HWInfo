@@ -56,6 +56,16 @@ namespace FanControl.HWInfo
                 if (int.TryParse(sensor.Replace(SENSOR_REGISTRY_NAME, string.Empty), out int index))
                 {
                     var type = GetSensorType(_key, index);
+
+                    // The gadget also publishes non-numeric entries: S.M.A.R.T. "Yes"/"No"
+                    // flags, CPU thermal throttling status, GPU performance limits. They
+                    // cannot be exposed as sensors, and parsing them in UpdateValues marks
+                    // the whole update as failed, which closes the plugin after 10 cycles.
+                    if (type == HwInfoSensorType.NotSupported)
+                    {
+                        continue;
+                    }
+
                     var id = GetId(_key, index);
                     var name = GetName(_key, index);
 
