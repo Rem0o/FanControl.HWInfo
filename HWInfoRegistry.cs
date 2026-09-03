@@ -8,8 +8,6 @@ namespace FanControl.HWInfo
 {
     internal class HWInfoRegistry : IDisposable
     {
-        private static CultureInfo _format = new CultureInfo("en-us");
-
         const string SENSOR_REGISTRY_NAME = "Sensor";
         const string LABEL_REGISTRY_NAME = "Label";
         const string VALUE_REGISTRY_NAME = "Value";
@@ -106,7 +104,7 @@ namespace FanControl.HWInfo
 
                 object valueRaw = _key.GetValue(VALUE_RAW_REGISTRY_NAME + sensor.Index);
 
-                if (valueRaw is string str && !string.IsNullOrEmpty(str) && float.TryParse(str, NumberStyles.Float, _format, out float res))
+                if (valueRaw is string str && !string.IsNullOrEmpty(str) && TryParseValue(str, out float res))
                     sensor.Value = res;
                 else
                     failed.Add(new FailedSensor { Id = sensor.Id, ValueRaw = valueRaw });
@@ -115,6 +113,25 @@ namespace FanControl.HWInfo
             return failed.Any() ?
                 HWInfoRegistryUpdateResult.Failure(failed) :
                 HWInfoRegistryUpdateResult.Success();
+        }
+
+        /// <summary>
+        /// Parses a ValueRaw string without assuming a decimal separator.
+        /// The previous hard-coded "en-us" culture only accepted a dot, so on installs
+        /// where HWiNFO writes ValueRaw with a comma every sensor failed to parse and the
+        /// plugin shut itself down after ten update cycles.
+        /// NumberStyles.Float excludes AllowThousands, so "1,234" cannot be read as a
+        /// group separator here and the fallbacks stay unambiguous.
+        /// </summary>
+        private static bool TryParseValue(string raw, out float result)
+        {
+            if (float.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+                return true;
+
+            if (float.TryParse(raw, NumberStyles.Float, CultureInfo.CurrentCulture, out result))
+                return true;
+
+            return float.TryParse(raw.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out result);
         }
 
         public void Dispose()
