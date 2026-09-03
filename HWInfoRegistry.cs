@@ -32,7 +32,7 @@ namespace FanControl.HWInfo
             {
                 return _key?.ValueCount > 0;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -125,7 +125,15 @@ namespace FanControl.HWInfo
 
         private static HwInfoSensorType GetSensorType(RegistryKey key, int index)
         {
-            var value = (string)key.GetValue(VALUE_REGISTRY_NAME + index);
+            // HWiNFO rewrites the VSB key on every polling cycle, so a value listed by
+            // GetValueNames() can already be gone by the time GetValue() runs here.
+            var value = key.GetValue(VALUE_REGISTRY_NAME + index) as string;
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return HwInfoSensorType.NotSupported;
+            }
+
             var unit = value.Trim().Split(' ').Skip(1).FirstOrDefault() ?? string.Empty;
 
             switch (unit.ToUpperInvariant())
@@ -154,8 +162,12 @@ namespace FanControl.HWInfo
         {
             var sensor = subKey.GetValue(SENSOR_REGISTRY_NAME + index);
             var label = subKey.GetValue(LABEL_REGISTRY_NAME + index);
-            var unit = (subKey.GetValue(VALUE_REGISTRY_NAME + index)
-                .ToString()
+            // Same race as in GetSensorType. An empty unit produces the same id as a
+            // value that simply has no unit, so ids stay stable and references saved in
+            // user configurations keep resolving.
+            var rawValue = subKey.GetValue(VALUE_REGISTRY_NAME + index) as string ?? string.Empty;
+
+            var unit = (rawValue
                 .Trim()
                 .Split(' ')
                 .Skip(1)
